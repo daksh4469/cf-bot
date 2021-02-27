@@ -161,6 +161,34 @@ async def on_message(message):
                     finalmsg = finalmsg + "Problem: " + str(data["result"][i]["problem"]["contestId"]) + str(data["result"][i]["problem"]["index"]) + " ( Rating: " + str(data["result"][i]["problem"]["rating"]) + ")  " + str(data["result"][i]["problem"]["name"]) + "   " + link + "\n"
                     cnt = cnt + 1
             await message.channel.send(finalmsg)
+        if msgArray[1] == "problems":
+            # tags = []
+            # rating = 0
+            # cnt = 0
+            # for i in msgArray:
+            #     cnt += 1
+            #     if cnt < 2:
+            #         continue
+            #     elif i.isnumeric():
+            #         rating = int(i)
+            #         break
+            #     else:
+            #         tags.append(i)
+            #  if len(tags) > 0:
+            #     if rating>0:
+            tags = msgArray[2]
+            res = requests.get("https://codeforces.com/api/problemset.problems?tags="+tags)
+            finalmsg = ""
+            data = res.json()
+            for i in range(5):
+                link = ""
+                link = link + "https://codeforces.com/problemset/problem/" + str(data["result"]["problems"][i]["contestId"]) + "/" + str(data["result"]["problems"][i]["index"]) + "/"
+                finalmsg = finalmsg + "Problem: " + str(data["result"]["problems"][i]["contestId"]) + str(data["result"]["problems"][i]["index"]) + " ( Rating: " + str(data["result"]["problems"][i]["rating"]) + ")  " + str(data["result"]["problems"][i]["name"]) + "   " + link + "\n"
+            await message.channel.send(finalmsg)
+
+
+
+            
 
 
 
