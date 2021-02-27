@@ -11,6 +11,8 @@ load_dotenv()
 DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
 bot = discord.Client()
 
+import datetime
+
 @bot.event
 async def on_ready():
     guild_count = 0
@@ -26,7 +28,6 @@ async def on_message(message):
     msg = message.content
     msgArray = msg.split(" ")
     if msgArray[0] == "cfbot":
-
         if msgArray[1] == "rate":
             res = requests.get("https://codeforces.com/api/user.info?handles=" + msgArray[2])
             data = res.json()
@@ -52,8 +53,41 @@ async def on_message(message):
                     diff = str(rating1 - rating2)
                     await message.channel.send(msgArray[2] + " has higher rating than " + msgArray[3] + " by a margin of " + diff + "\n" + msgArray[2] + " is a " + rank1 + "(" + r1 + ")" + " and " + msgArray[3] + " is a " + rank2 + "(" + r2 + ")" )
         if msgArray[1] == "hello":
-            await message.channel.send("hey dirtbag")
-    
-   
+            username = str(message.author.name)
+            await message.channel.send("Hey " + username + "......What's up?")
+        if msgArray[1] == "contests":
+            if msgArray[2] == "u":
+                res = requests.get("https://codeforces.com/api/contest.list?phase=BEFORE")
+                data = res.json()
+                finalmsg = ""
+                for i in range(5):
+                    hours = data["result"][i]["durationSeconds"]/3600
+                    days = 0
+                    time = str(hours) + " hours"
+                    timeUnit = "hours"
+                    if hours >= 24:
+                        days = hours//24
+                        hours = hours%24
+                        timeUnit = "days"
+                        time = str(days) + " days " + str(hours) + " hours"
+                    finalmsg = finalmsg + "Contest: " + str(data["result"][i]["name"]) + " ---------- " + "Duration Time: " + time + "\n>>>>> Start Time:   " + str(datetime.datetime.fromtimestamp( int(str(data["result"][i]["startTimeSeconds"])) ).strftime('%Y-%m-%d %H:%M:%S')) + "\n\n"
+                await message.channel.send(finalmsg)
+            elif msgArray[2] == "c":
+                res = requests.get("https://codeforces.com/api/contest.list?gym=true")
+                data = res.json()
+                finalmsg = ""
+                n = len(data["result"])
+                for i in range(5):
+                    hours = data["result"][(-(i+1))]["durationSeconds"]/3600
+                    days = 0
+                    time = str(hours) + " hours"
+                    timeUnit = "hours"
+                    if hours >= 24:
+                        days = hours//24
+                        hours = hours%24
+                        timeUnit = "days"
+                        time = str(days) + " days " + str(hours) + " hours"
+                    finalmsg = finalmsg + "Contest: " + str(data["result"][-(i+1)]["name"]) + "\n\n"
+                await message.channel.send(finalmsg)
 
 bot.run(DISCORD_TOKEN)
