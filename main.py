@@ -47,7 +47,7 @@ async def on_message(message):
         if msgArray[1] == "online":
             res = requests.get("https://codeforces.com/api/user.info?handles=" + msgArray[2])
             data = res.json()
-            await message.channel.send(str(datetime.datetime.fromtimestamp( int(str(data["result"][0]["lastOnlineTimeSeconds"])) ).strftime('%Y-%m-%d %H:%M:%S')))
+            await message.channel.send("Last Online: " + str(datetime.datetime.fromtimestamp(int(str(data["result"][0]["lastOnlineTimeSeconds"])) ).strftime('%Y-%m-%d %H:%M:%S')))
 
         if msgArray[1] == "compare":
             if(len(msgArray)<=3):
@@ -73,7 +73,7 @@ async def on_message(message):
         if msgArray[1] == "hello":
             username = str(message.author.name)
             await message.channel.send("Hey " + username + "......What's up?")
-            
+
         if msgArray[1] == "contests":
             if msgArray[2] == "u":
                 res = requests.get("https://codeforces.com/api/contest.list?phase=BEFORE")
@@ -108,5 +108,17 @@ async def on_message(message):
                         time = str(days) + " days " + str(hours) + " hours"
                     finalmsg = finalmsg + "Contest: " + str(data["result"][-(i+1)]["name"]) + "\n\n"
                 await message.channel.send(finalmsg)
+        if msgArray[1] == "recent":
+            res = requests.get("https://codeforces.com/api/user.status?handle=" + msgArray[2] + "&from=1&count=50")
+            data = res.json()
+            finalmsg = ""
+            cnt = 0
+            for i in range(50):
+                if cnt == 5:
+                    break
+                if(data["result"][i]["verdict"] == "OK"):
+                    finalmsg = finalmsg + "Problem: " + str(data["result"][i]["problem"]["contestId"]) + str(data["result"][i]["problem"]["index"]) + "  " + str(data["result"][i]["problem"]["name"]) + "\n"
+                    cnt = cnt + 1
+            await message.channel.send(finalmsg)
 
 bot.run(DISCORD_TOKEN)
