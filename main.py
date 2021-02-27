@@ -46,6 +46,8 @@ async def on_message(message):
             helpmsg.add_field(name = "bunny cmp *username1* *username2*", value = "Create a vizualisation of the comparison between two CodeForces users", inline = False)
             helpmsg.add_field(name = "bunny blog *number*", value = "Get the recently added blogs by the specified user", inline = False)
 
+            helpmsg.add_field(name= "bunny gimme *username* *problemtag*",value = "Recommend question according to your rating",inline = False)
+            helpmsg.add_field(name= "bunny problems *problemtag*",value = "Recommend the best questions of the given problemtag",inline = False)
             await message.channel.send(embed = helpmsg)
 
         if msgArray[1] == "rate":
@@ -165,20 +167,6 @@ async def on_message(message):
                     cnt = cnt + 1
             await message.channel.send("Recently solved problems by "+msgArray[2],embed=stalkmsg)
         if msgArray[1] == "problems":
-            # tags = []
-            # rating = 0
-            # cnt = 0
-            # for i in msgArray:
-            #     cnt += 1
-            #     if cnt < 2:
-            #         continue
-            #     elif i.isnumeric():
-            #         rating = int(i)
-            #         break
-            #     else:
-            #         tags.append(i)
-            #  if len(tags) > 0:
-            #     if rating>0:
             tags = msgArray[2]
             res = requests.get("https://codeforces.com/api/problemset.problems?tags="+tags)
             finalmsg = ""
@@ -189,9 +177,37 @@ async def on_message(message):
                 finalmsg = finalmsg + "Problem: " + str(data["result"]["problems"][i]["contestId"]) + str(data["result"]["problems"][i]["index"]) + " ( Rating: " + str(data["result"]["problems"][i]["rating"]) + ")  " + str(data["result"]["problems"][i]["name"]) + "   " + link + "\n"
             await message.channel.send(finalmsg)
 
+        
+        if msgArray[1] == "gimme":
+            res1 = requests.get("https://codeforces.com/api/user.info?handles=" + msgArray[2])
+            data1  = res1.json()
+            userRating = int(data1["result"][0]["rating"])
+            tags = msgArray[3]
+            res = requests.get("https://codeforces.com/api/problemset.problems?tags="+tags)
+            finalmsg = ""
+            data = res.json()
+            cnt = 0
+            for i in range(50):
+                if cnt == 5:
+                    break
+                elif int(data["result"]["problems"][i]["rating"]) >= userRating and int(data["result"]["problems"][i]["rating"]) <= userRating+200:
+                    cnt = cnt + 1
+                    link = ""
+                    link = link + "https://codeforces.com/problemset/problem/" + str(data["result"]["problems"][i]["contestId"]) + "/" + str(data["result"]["problems"][i]["index"]) + "/"
+                    finalmsg = finalmsg + "Problem: " + str(data["result"]["problems"][i]["contestId"]) + str(data["result"]["problems"][i]["index"]) + " ( Rating: " + str(data["result"]["problems"][i]["rating"]) + ")  " + str(data["result"]["problems"][i]["name"]) + "   " + link + "\n"
+            await message.channel.send(finalmsg)
+        
 
             
 
+        if msgArray[1] == "blog":
+            res = requests.get("https://codeforces.com/api/user.blogEntries?handle=" + msgArray[2])
+            data = res.json()
+            n = int(msgArray[3])
+            if n > len(data["result"]):
+                n = len(data["result"])
+            for i in range(n):
+                await message.channel.send("https://codeforces.com/blog/entry/" + str(data["result"][i]["id"]))
 
 
 bot.run(DISCORD_TOKEN)
