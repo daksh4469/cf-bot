@@ -1,9 +1,13 @@
 import discord 
-
+import time as tm
 import os
-
+import unittest
+import sys
+from PIL import Image
 import requests
-
+import selenium
+from selenium import webdriver
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -39,6 +43,7 @@ async def on_message(message):
             helpmsg.add_field(name = "bunny contests u", value = "Get the info on upcoming contests on CodeForces", inline = False)
             helpmsg.add_field(name = "bunny contests c", value = "Get the info on recently completed contests on CodeForces", inline = False)
             helpmsg.add_field(name = "bunny recent *username*", value = "Gets the recently solved question of the desired user", inline = False)
+            helpmsg.add_field(name = "bunny cmp *username1* *username2*", value = "Create a vizualisation of the comparison between two CodeForces users", inline = False)
             await message.channel.send(embed = helpmsg)
 
         if msgArray[1] == "rate":
@@ -82,7 +87,27 @@ async def on_message(message):
                 else:
                     diff = str(rating1 - rating2)
                     await message.channel.send(msgArray[2] + " has higher rating than " + msgArray[3] + " by a margin of " + diff + "\n" + msgArray[2] + " is a " + rank1 + "(" + r1 + ")" + " and " + msgArray[3] + " is a " + rank2 + "(" + r2 + ")" )
-        
+        if msgArray[1] == "cmp":
+            driver=webdriver.Chrome(executable_path=r"C:\\Users\\91852\\OneDrive\\Desktop\\basicbot\\chromedriver\\tools\\chromedriver.exe")
+            driver.get("https://cfviz.netlify.app/compare.html")
+            handle1=driver.find_element_by_xpath('//*[@id="handle1"]')
+            handle2=driver.find_element_by_xpath('//*[@id="handle2"]')
+            cmpbutton=driver.find_element_by_xpath('//*[@id="submitButton"]')
+            handle1.send_keys(msgArray[2])
+            handle2.send_keys(msgArray[3])
+            cmpbutton.click()
+            driver.maximize_window()
+            tm.sleep(10)
+            driver.save_screenshot('my_screenshot.png')
+            img = Image.open("my_screenshot.png")
+            area = (100, 330, 1800, 800)
+            img.crop(area).save("my_screenshot.png",'PNG')
+            out=discord.Embed(title="comparison",description="",color=0x34ebab)
+            file = discord.File("my_screenshot.png", filename="image.png")
+            out.set_image(url="attachment://image.png")
+            await message.channel.send(file=file,embed=out)
+            driver.quit()
+
         if msgArray[1] == "hello":
             username = str(message.author.name)
             await message.channel.send("Hey " + username + "......What's up?")
@@ -164,5 +189,7 @@ async def on_message(message):
 
 
             
+
+
 
 bot.run(DISCORD_TOKEN)
