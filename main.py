@@ -42,8 +42,10 @@ async def on_message(message):
             helpmsg.add_field(name = "bunny compare *username1* *username2*", value = "Gets the comparison of the CodeForces rating of the desired user", inline = False)
             helpmsg.add_field(name = "bunny contests u", value = "Get the info on upcoming contests on CodeForces", inline = False)
             helpmsg.add_field(name = "bunny contests c", value = "Get the info on recently completed contests on CodeForces", inline = False)
-            helpmsg.add_field(name = "bunny recent *username*", value = "Gets the recently solved question of the desired user", inline = False)
+            helpmsg.add_field(name = "bunny stalk *username*", value = "Stalk the recently solved question of the desired user", inline = False)
             helpmsg.add_field(name = "bunny cmp *username1* *username2*", value = "Create a vizualisation of the comparison between two CodeForces users", inline = False)
+            helpmsg.add_field(name = "bunny blog *number*", value = "Get the recently added blogs by the specified user", inline = False)
+
             await message.channel.send(embed = helpmsg)
 
         if msgArray[1] == "rate":
@@ -88,7 +90,7 @@ async def on_message(message):
                     diff = str(rating1 - rating2)
                     await message.channel.send(msgArray[2] + " has higher rating than " + msgArray[3] + " by a margin of " + diff + "\n" + msgArray[2] + " is a " + rank1 + "(" + r1 + ")" + " and " + msgArray[3] + " is a " + rank2 + "(" + r2 + ")" )
         if msgArray[1] == "cmp":
-            driver=webdriver.Chrome(executable_path=r"C:\\Users\\91852\\OneDrive\\Desktop\\basicbot\\chromedriver\\tools\\chromedriver.exe")
+            driver=webdriver.Chrome(executable_path=r".\\chromedriver.exe")
             driver.get("https://cfviz.netlify.app/compare.html")
             handle1=driver.find_element_by_xpath('//*[@id="handle1"]')
             handle2=driver.find_element_by_xpath('//*[@id="handle2"]')
@@ -97,7 +99,7 @@ async def on_message(message):
             handle2.send_keys(msgArray[3])
             cmpbutton.click()
             driver.maximize_window()
-            tm.sleep(10)
+            tm.sleep(8)
             driver.save_screenshot('my_screenshot.png')
             img = Image.open("my_screenshot.png")
             area = (100, 330, 1800, 800)
@@ -146,21 +148,22 @@ async def on_message(message):
                         time = str(days) + " days " + str(hours) + " hours"
                     finalmsg = finalmsg + "Contest: " + str(data["result"][-(i+1)]["name"]) + "\n\n"
                 await message.channel.send(finalmsg)
-        if msgArray[1] == "recent":
+        if msgArray[1] == "stalk":
             res = requests.get("https://codeforces.com/api/user.status?handle=" + msgArray[2] + "&from=1&count=50")
             data = res.json()
-            finalmsg = ""
+            stalkmsg = discord.Embed(title="", description="", color = 0x34ebab)
             cnt = 0
-            n = int(msgArray[3])
             for i in range(50):
-                if cnt == n:
+                if cnt == 10:
                     break
                 if(data["result"][i]["verdict"] == "OK"):
                     link = ""
                     link = link + "https://codeforces.com/problemset/problem/" + str(data["result"][i]["problem"]["contestId"]) + "/" + str(data["result"][i]["problem"]["index"]) + "/"
-                    finalmsg = finalmsg + "Problem: " + str(data["result"][i]["problem"]["contestId"]) + str(data["result"][i]["problem"]["index"]) + " ( Rating: " + str(data["result"][i]["problem"]["rating"]) + ")  " + str(data["result"][i]["problem"]["name"]) + "   " + link + "\n"
+                    string="Problem: " + str(data["result"][i]["problem"]["contestId"]) + str(data["result"][i]["problem"]["index"]) + "\n ( Rating: " + str(data["result"][i]["problem"]["rating"]) + ")  "  "   " "\n"
+                    problemname=str(data["result"][i]["problem"]["name"])
+                    stalkmsg.add_field(name=string,value="["+problemname+"]("+link+")")
                     cnt = cnt + 1
-            await message.channel.send(finalmsg)
+            await message.channel.send("Recently solved problems by "+msgArray[2],embed=stalkmsg)
         if msgArray[1] == "problems":
             # tags = []
             # rating = 0
@@ -185,7 +188,6 @@ async def on_message(message):
                 link = link + "https://codeforces.com/problemset/problem/" + str(data["result"]["problems"][i]["contestId"]) + "/" + str(data["result"]["problems"][i]["index"]) + "/"
                 finalmsg = finalmsg + "Problem: " + str(data["result"]["problems"][i]["contestId"]) + str(data["result"]["problems"][i]["index"]) + " ( Rating: " + str(data["result"]["problems"][i]["rating"]) + ")  " + str(data["result"]["problems"][i]["name"]) + "   " + link + "\n"
             await message.channel.send(finalmsg)
-
 
 
             
