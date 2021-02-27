@@ -3,7 +3,7 @@ import time as tm
 import os
 import unittest
 import sys
-
+from PIL import Image
 import requests
 import selenium
 from selenium import webdriver
@@ -74,7 +74,6 @@ async def on_message(message):
                     diff = str(rating1 - rating2)
                     await message.channel.send(msgArray[2] + " has higher rating than " + msgArray[3] + " by a margin of " + diff + "\n" + msgArray[2] + " is a " + rank1 + "(" + r1 + ")" + " and " + msgArray[3] + " is a " + rank2 + "(" + r2 + ")" )
         if msgArray[1] == "cmp":
-            print("git it")
             driver=webdriver.Chrome(executable_path=r"C:\\Users\\91852\\OneDrive\\Desktop\\basicbot\\chromedriver\\tools\\chromedriver.exe")
             driver.get("https://cfviz.netlify.app/compare.html")
             handle1=driver.find_element_by_xpath('//*[@id="handle1"]')
@@ -86,7 +85,15 @@ async def on_message(message):
             driver.maximize_window()
             tm.sleep(10)
             driver.save_screenshot('my_screenshot.png')
-            await message.channel.send(file=discord.File('my_screenshot.png'))
+            img = Image.open("my_screenshot.png")
+            area = (100, 330, 1800, 800)
+            img.crop(area).save("my_screenshot.png",'PNG')
+            out=discord.Embed(title="comparison",description="",color=0x34ebab)
+            file = discord.File("my_screenshot.png", filename="image.png")
+            out.set_image(url="attachment://image.png")
+            await message.channel.send(file=file,embed=out)
+            driver.quit()
+
         if msgArray[1] == "hello":
             username = str(message.author.name)
             await message.channel.send("Hey " + username + "......What's up?")
