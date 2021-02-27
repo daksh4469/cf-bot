@@ -1,9 +1,13 @@
 import discord 
-
+import time as tm
 import os
+import unittest
+import sys
 
 import requests
-
+import selenium
+from selenium import webdriver
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -52,6 +56,20 @@ async def on_message(message):
                 else:
                     diff = str(rating1 - rating2)
                     await message.channel.send(msgArray[2] + " has higher rating than " + msgArray[3] + " by a margin of " + diff + "\n" + msgArray[2] + " is a " + rank1 + "(" + r1 + ")" + " and " + msgArray[3] + " is a " + rank2 + "(" + r2 + ")" )
+        if msgArray[1] == "cmp":
+            print("git it")
+            driver=webdriver.Chrome(executable_path=r"C:\\Users\\91852\\OneDrive\\Desktop\\basicbot\\chromedriver\\tools\\chromedriver.exe")
+            driver.get("https://cfviz.netlify.app/compare.html")
+            handle1=driver.find_element_by_xpath('//*[@id="handle1"]')
+            handle2=driver.find_element_by_xpath('//*[@id="handle2"]')
+            cmpbutton=driver.find_element_by_xpath('//*[@id="submitButton"]')
+            handle1.send_keys("rahulraga")
+            handle2.send_keys("shivag4321")
+            cmpbutton.click()
+            driver.maximize_window()
+            tm.sleep(10)
+            driver.save_screenshot('my_screenshot.png')
+            await message.channel.send(file=discord.File('my_screenshot.png'))
         if msgArray[1] == "hello":
             username = str(message.author.name)
             await message.channel.send("Hey " + username + "......What's up?")
@@ -89,5 +107,7 @@ async def on_message(message):
                         time = str(days) + " days " + str(hours) + " hours"
                     finalmsg = finalmsg + "Contest: " + str(data["result"][-(i+1)]["name"]) + "\n\n"
                 await message.channel.send(finalmsg)
+
+
 
 bot.run(DISCORD_TOKEN)
