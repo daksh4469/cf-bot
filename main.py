@@ -28,6 +28,19 @@ async def on_message(message):
     msg = message.content
     msgArray = msg.split(" ")
     if msgArray[0] == "bunny":
+        if msgArray[1] == "help":
+            helpmsg = discord.Embed(title="Welcome to Bunny: The CF Bot!", description="There are several commands that you can use, to stalk people ofc ;)", color = 0x34ebab)
+            helpmsg.add_field(name = "bunny hello", value = "Greet the bot losers", inline = False)
+            helpmsg.add_field(name = "bunny rate *username*", value = "Gets the CodeForces rating of the desired user", inline = False)
+            helpmsg.add_field(name = "bunny rank *username*", value = "Gets the CodeForces rank of the desired user", inline = False)
+            helpmsg.add_field(name = "bunny max *username*", value = "Gets the CodeForces peak statistics of the desired user", inline = False)
+            helpmsg.add_field(name = "bunny online *username*", value = "Gets the last online appearance of the desired user on CodeForces", inline = False)
+            helpmsg.add_field(name = "bunny compare *username1* *username2*", value = "Gets the comparison of the CodeForces rating of the desired user", inline = False)
+            helpmsg.add_field(name = "bunny contests u", value = "Get the info on upcoming contests on CodeForces", inline = False)
+            helpmsg.add_field(name = "bunny contests c", value = "Get the info on recently completed contests on CodeForces", inline = False)
+            helpmsg.add_field(name = "bunny recent *username*", value = "Gets the recently solved question of the desired user", inline = False)
+            await message.channel.send(embed = helpmsg)
+
         if msgArray[1] == "rate":
             res = requests.get("https://codeforces.com/api/user.info?handles=" + msgArray[2])
             data = res.json()
@@ -113,11 +126,14 @@ async def on_message(message):
             data = res.json()
             finalmsg = ""
             cnt = 0
+            n = int(msgArray[3])
             for i in range(50):
-                if cnt == 5:
+                if cnt == n:
                     break
                 if(data["result"][i]["verdict"] == "OK"):
-                    finalmsg = finalmsg + "Problem: " + str(data["result"][i]["problem"]["contestId"]) + str(data["result"][i]["problem"]["index"]) + "  " + str(data["result"][i]["problem"]["name"]) + "\n"
+                    link = ""
+                    link = link + "https://codeforces.com/problemset/problem/" + str(data["result"][i]["problem"]["contestId"]) + "/" + str(data["result"][i]["problem"]["index"]) + "/"
+                    finalmsg = finalmsg + "Problem: " + str(data["result"][i]["problem"]["contestId"]) + str(data["result"][i]["problem"]["index"]) + " ( Rating: " + str(data["result"][i]["problem"]["rating"]) + ")  " + str(data["result"][i]["problem"]["name"]) + "   " + link + "\n"
                     cnt = cnt + 1
             await message.channel.send(finalmsg)
 
