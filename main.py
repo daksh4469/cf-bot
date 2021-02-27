@@ -32,9 +32,51 @@ async def on_message(message):
     msg = message.content
     msgArray = msg.split(" ")
     if msgArray[0] == "bunny":
+        if msgArray[1] == "whoami":
+            await message.channel.send("U are " + str(message.author.name) + " dude.....")
+
+        if msgArray[1] == "bye":
+            await message.channel.send("Goodbye coder.... (●π⌒π)")
+        
+        if msgArray[1] == "howru":
+            await message.channel.send("Mind ur own business :|")
+
+        if msgArray[1] == "whoru":
+            await message.channel.send("I am friendly bot....Bunny")
+
+        if msgArray[1] == "whyru":
+            await message.channel.send("Bcoz u need me, ofc")
+
+        if msgArray[1] == "bunny":
+            await message.channel.send("OOPS...... u typed bunny twice!")
+
+        if msgArray[1] == "resources":
+            resourcesmsg = discord.Embed(title="Resources for Competetive Programming", color=0x0388fc)
+            link = "https://cp-algorithms.com/"
+            sitename = "CP-Algorithms"
+            resourcesmsg.add_field(name="Resource #1:",value="["+sitename+"]("+link+")", inline = False)
+            link = "https://www.hackerearth.com/practice/data-structures/arrays/1-d/tutorial/"
+            sitename = "HackerEarth Data Structures"
+            resourcesmsg.add_field(name="Resource #2:",value="["+sitename+"]("+link+")", inline = False)
+            link = "https://www.hackerearth.com/practice/algorithms/searching/linear-search/tutorial/"
+            sitename = "HackerEarth Algorithms"
+            resourcesmsg.add_field(name="Resource #3:",value="["+sitename+"]("+link+")", inline = False)
+            link = "https://www.geeksforgeeks.org/data-structures/"
+            sitename = "GeeksForGeeks Data Structures"
+            resourcesmsg.add_field(name="Resource #4:",value="["+sitename+"]("+link+")", inline = False)    
+            link = "https://www.geeksforgeeks.org/fundamentals-of-algorithms/"
+            sitename = "GeeksForGeeks Algorothms"
+            resourcesmsg.add_field(name="Resource #5:",value="["+sitename+"]("+link+")", inline = False)
+            await message.channel.send(embed=resourcesmsg)
+
         if msgArray[1] == "help":
             helpmsg = discord.Embed(title="Welcome to Bunny: The CF Bot!", description="There are several commands that you can use, to stalk people ofc ;)", color = 0x34ebab)
             helpmsg.add_field(name = "bunny hello", value = "Greet the bot losers", inline = False)
+            helpmsg.add_field(name = "bunny whoami", inline = False)
+            helpmsg.add_field(name = "bunny bye", inline = False)
+            helpmsg.add_field(name = "bunny whoru", inline = False)
+            helpmsg.add_field(name = "bunny howru", inline = False)
+            helpmsg.add_field(name = "bunny whyru", inline = False)
             helpmsg.add_field(name = "bunny rate *username*", value = "Gets the CodeForces rating of the desired user", inline = False)
             helpmsg.add_field(name = "bunny rank *username*", value = "Gets the CodeForces rank of the desired user", inline = False)
             helpmsg.add_field(name = "bunny max *username*", value = "Gets the CodeForces peak statistics of the desired user", inline = False)
@@ -45,9 +87,9 @@ async def on_message(message):
             helpmsg.add_field(name = "bunny stalk *username*", value = "Stalk the recently solved question of the desired user", inline = False)
             helpmsg.add_field(name = "bunny cmp *username1* *username2*", value = "Create a vizualisation of the comparison between two CodeForces users", inline = False)
             helpmsg.add_field(name = "bunny blog *number*", value = "Get the recently added blogs by the specified user", inline = False)
-
             helpmsg.add_field(name= "bunny gimme *username* *problemtag*",value = "Recommend question according to your rating",inline = False)
             helpmsg.add_field(name= "bunny problems *problemtag*",value = "Recommend the best questions of the given problemtag",inline = False)
+            helpmsg.add_field(name = "bunny resources", value = "Get the top resources needed to excel in Competetive Programming", inline = False)
             await message.channel.send(embed = helpmsg)
 
         if msgArray[1] == "rate":
@@ -91,6 +133,7 @@ async def on_message(message):
                 else:
                     diff = str(rating1 - rating2)
                     await message.channel.send(msgArray[2] + " has higher rating than " + msgArray[3] + " by a margin of " + diff + "\n" + msgArray[2] + " is a " + rank1 + "(" + r1 + ")" + " and " + msgArray[3] + " is a " + rank2 + "(" + r2 + ")" )
+        
         if msgArray[1] == "cmp":
             driver=webdriver.Chrome(executable_path=r".\\chromedriver.exe")
             driver.get("https://cfviz.netlify.app/compare.html")
@@ -106,7 +149,7 @@ async def on_message(message):
             img = Image.open("my_screenshot.png")
             area = (100, 330, 1800, 800)
             img.crop(area).save("my_screenshot.png",'PNG')
-            out=discord.Embed(title="comparison",description="",color=0x34ebab)
+            out=discord.Embed(title="comparison",description="",color=0xfc034a)
             file = discord.File("my_screenshot.png", filename="image.png")
             out.set_image(url="attachment://image.png")
             await message.channel.send(file=file,embed=out)
@@ -150,10 +193,11 @@ async def on_message(message):
                         time = str(days) + " days " + str(hours) + " hours"
                     finalmsg = finalmsg + "Contest: " + str(data["result"][-(i+1)]["name"]) + "\n\n"
                 await message.channel.send(finalmsg)
+        
         if msgArray[1] == "stalk":
             res = requests.get("https://codeforces.com/api/user.status?handle=" + msgArray[2] + "&from=1&count=50")
             data = res.json()
-            stalkmsg = discord.Embed(title="", description="", color = 0x34ebab)
+            stalkmsg = discord.Embed(title="", description="", color = 0xfcb103)
             cnt = 0
             for i in range(50):
                 if cnt == 10:
@@ -166,6 +210,7 @@ async def on_message(message):
                     stalkmsg.add_field(name=string,value="["+problemname+"]("+link+")")
                     cnt = cnt + 1
             await message.channel.send("Recently solved problems by "+msgArray[2],embed=stalkmsg)
+        
         if msgArray[1] == "problems":
             tags = msgArray[2]
             res = requests.get("https://codeforces.com/api/problemset.problems?tags="+tags)
@@ -177,7 +222,6 @@ async def on_message(message):
                 finalmsg = finalmsg + "Problem: " + str(data["result"]["problems"][i]["contestId"]) + str(data["result"]["problems"][i]["index"]) + " ( Rating: " + str(data["result"]["problems"][i]["rating"]) + ")  " + str(data["result"]["problems"][i]["name"]) + "   " + link + "\n"
             await message.channel.send(finalmsg)
 
-        
         if msgArray[1] == "gimme":
             res1 = requests.get("https://codeforces.com/api/user.info?handles=" + msgArray[2])
             data1  = res1.json()
@@ -197,9 +241,6 @@ async def on_message(message):
                     finalmsg = finalmsg + "Problem: " + str(data["result"]["problems"][i]["contestId"]) + str(data["result"]["problems"][i]["index"]) + " ( Rating: " + str(data["result"]["problems"][i]["rating"]) + ")  " + str(data["result"]["problems"][i]["name"]) + "   " + link + "\n"
             await message.channel.send(finalmsg)
         
-
-            
-
         if msgArray[1] == "blog":
             res = requests.get("https://codeforces.com/api/user.blogEntries?handle=" + msgArray[2])
             data = res.json()
