@@ -27,11 +27,28 @@ async def on_ready():
 async def on_message(message):
     msg = message.content
     msgArray = msg.split(" ")
-    if msgArray[0] == "cfbot":
+    if msgArray[0] == "bunny":
         if msgArray[1] == "rate":
             res = requests.get("https://codeforces.com/api/user.info?handles=" + msgArray[2])
             data = res.json()
-            await message.channel.send(data["result"][0]["maxRating"])
+            await message.channel.send(data["result"][0]["rating"])
+
+        if msgArray[1] == "rank":
+            res = requests.get("https://codeforces.com/api/user.info?handles=" + msgArray[2])
+            data = res.json()
+            await message.channel.send(data["result"][0]["rank"])
+            
+        if msgArray[1] == "max":
+            res = requests.get("https://codeforces.com/api/user.info?handles=" + msgArray[2])
+            data = res.json()
+            finalmsg = str(data["result"][0]["maxRating"]) + "(" + data["result"][0]["maxRank"] + ")"
+            await message.channel.send(finalmsg)
+
+        if msgArray[1] == "online":
+            res = requests.get("https://codeforces.com/api/user.info?handles=" + msgArray[2])
+            data = res.json()
+            await message.channel.send(str(datetime.datetime.fromtimestamp( int(str(data["result"][0]["lastOnlineTimeSeconds"])) ).strftime('%Y-%m-%d %H:%M:%S')))
+
         if msgArray[1] == "compare":
             if(len(msgArray)<=3):
                 await message.channel.send("Error: 2 parameters required")
@@ -52,9 +69,11 @@ async def on_message(message):
                 else:
                     diff = str(rating1 - rating2)
                     await message.channel.send(msgArray[2] + " has higher rating than " + msgArray[3] + " by a margin of " + diff + "\n" + msgArray[2] + " is a " + rank1 + "(" + r1 + ")" + " and " + msgArray[3] + " is a " + rank2 + "(" + r2 + ")" )
+        
         if msgArray[1] == "hello":
             username = str(message.author.name)
             await message.channel.send("Hey " + username + "......What's up?")
+            
         if msgArray[1] == "contests":
             if msgArray[2] == "u":
                 res = requests.get("https://codeforces.com/api/contest.list?phase=BEFORE")
