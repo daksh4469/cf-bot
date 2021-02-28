@@ -24,3 +24,7 @@ Bunny is a discord bot for every CodeForces competetive programmer out there. It
  - You are good to go!
 
 As this is in production, one cannot setup this repository locally due to risk on leakage of some sensitive information.
+
+# Screenshots
+![Screenshot](https://user-images.githubusercontent.com/60084414/109409845-0c2cb080-79bc-11eb-9418-088105ff93fe.png)
+![Screenshot (3)](https://user-images.githubusercontent.com/60084414/109409864-28c8e880-79bc-11eb-9415-d24e75aecaa3.png)
