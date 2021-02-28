@@ -10,7 +10,7 @@ from selenium import webdriver
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv('.env')
 
 DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
 bot = discord.Client()
