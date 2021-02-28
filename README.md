@@ -1,3 +1,4 @@
+![coder](https://user-images.githubusercontent.com/60084414/109409957-d5a36580-79bc-11eb-9194-62a54e57110c.jpg)
 # Bunny: The CF-Bot
 
 Bunny is a discord bot for every CodeForces competetive programmer out there. It enables users to give various commands through chat in discord in return for respective information.One can compare himself/herself with other coders out there,get details compiled in a better way through a single command.
